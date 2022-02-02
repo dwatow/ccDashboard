@@ -13,9 +13,9 @@
       <span v-else>{{ error }}</span>
     </nav>
     <!-- <pre>current_erp: {{ current_erp }}</pre> -->
-    <div class="content">
+    <div class="content" v-if="current_erp">
       <a class="btn btn-primary my-3" target="_blank" :href="current_erp.network">Github Network</a>
-      <div class="row" v-if="current_erp">
+      <div class="row">
         <div class="col">
           <div>
             <h1>
