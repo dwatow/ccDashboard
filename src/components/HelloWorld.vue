@@ -1,16 +1,16 @@
 <template>
   <div class="container">
-    <button type="button" class="btn btn-primary my-2" @click="fetchStatus">重新整理</button>
+    <button type="button" class="btn btn-primary my-2 me-2" @click="fetchStatus">重新整理</button>
+    <span v-if="error">{{ error }}</span>
     <nav>
-      <ul class="nav nav-tabs erp_status" v-if="status">
-        <li class="nav-item" v-for="(value, key) in status">
+      <ul class="nav nav-tabs erp_status">
+        <li class="nav-item" v-for="(value, key) in all_erp_status">
           <a class="nav-link active erp-name" aria-current="page" @click="update(value)">
             {{ erpName[key] }}
             <small class="badge rounded-pill bg-danger" v-if="!value.isSync">待更新</small>
           </a>
         </li>
       </ul>
-      <span v-else>{{ error }}</span>
     </nav>
     <!-- <pre>current_erp: {{ current_erp }}</pre> -->
     <div class="content" v-if="current_erp">
@@ -58,18 +58,59 @@ export default {
   },
   data () {
     return {
-      all_erp_status: null,
+      all_erp_status: {
+    "ccerpF": {
+        "isSync": true,
+    },
+    "ccerpFV": {
+        "isSync": true,
+    },
+    "ccerpB": {
+        "isSync": true,
+    },
+    "ccgeoF": {
+        "isSync": true,
+    },
+    "ccgeoB": {
+        "isSync": true,
+    },
+    "jserpF": {
+        "isSync": true,
+    },
+    "jserpB": {
+        "isSync": true,
+    },
+    "patronF": {
+        "isSync": true,
+    },
+    "patronB": {
+        "isSync": true,
+    },
+    "prettyF": {
+        "isSync": true,
+    },
+    "prettyB": {
+        "isSync": true,
+    },
+    "campF": {
+        "isSync": true,
+    },
+    "campB": {
+        "isSync": true,
+    }
+},
       current_erp: null,
-      error: '連線中...'
+      error: null
     }
   },
   methods: {
     async fetchStatus () {
       try {
-        this.all_erp_status = null;
-        this.current_erp = null;
+        // this.all_erp_status = null;
+        // this.current_erp = null;
         this.error = '連線中...';
         this.all_erp_status = await API.fetchUpdateStatus();
+        this.error = null;
       } catch (e) {
         this.error = e
       }
@@ -96,7 +137,7 @@ export default {
         campB: "露營樂 ERP 後端",
       }
     },
-    status () {
+    erpStatus () {
       return this.all_erp_status
     }
   }
