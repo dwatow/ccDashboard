@@ -86,6 +86,8 @@ export default {
         ccerpB: "全強 ERP 後端",
         ccgeoF: "大地監控 前端",
         ccgeoB: "大地監控 後端",
+        jserpF: "郡信 ERP 前端",
+        jserpB: "郡信 ERP 後端",
         patronF: "台灣守護 ERP 前端",
         patronB: "台灣守護 ERP 後端",
         prettyF: "台灣真美 ERP 前端",
