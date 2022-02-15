@@ -11,16 +11,25 @@
     <!-- <pre>{{ all_erp_status }}</pre> -->
     <nav>
       <ul class="nav nav-tabs erp_status">
-        <li class="nav-item" v-for="(value, key) in all_erp_status">
+        <li class="nav-item" v-for="(erp_status, key) in all_erp_status">
           <a
             class="nav-link active erp-name"
             aria-current="page"
-            @click="update(value)"
+            @click="update(erp_status)"
           >
             {{ erpName[key] }}
-            <small class="badge rounded-pill bg-danger" v-if="!value.isSync"
-              >待更新</small
+            <small
+              class="badge rounded-pill bg-danger"
+              v-if="erp_status.isSync === false"
             >
+              待更新
+            </small>
+            <small
+              class="badge rounded-pill bg-success"
+              v-if="erp_status.isSync === null"
+            >
+              連線中
+            </small>
           </a>
         </li>
       </ul>
@@ -82,43 +91,43 @@ export default {
     return {
       all_erp_status: {
         ccerpF: {
-          isSync: true,
+          isSync: null,
         },
         ccerpFV: {
-          isSync: true,
+          isSync: null,
         },
         ccerpB: {
-          isSync: true,
+          isSync: null,
         },
         ccgeoF: {
-          isSync: true,
+          isSync: null,
         },
         ccgeoB: {
-          isSync: true,
+          isSync: null,
         },
         jserpF: {
-          isSync: true,
+          isSync: null,
         },
         jserpB: {
-          isSync: true,
+          isSync: null,
         },
         patronF: {
-          isSync: true,
+          isSync: null,
         },
         patronB: {
-          isSync: true,
+          isSync: null,
         },
         prettyF: {
-          isSync: true,
+          isSync: null,
         },
         prettyB: {
-          isSync: true,
+          isSync: null,
         },
         campF: {
-          isSync: true,
+          isSync: null,
         },
         campB: {
-          isSync: true,
+          isSync: null,
         },
       },
       current_erp: null,
@@ -161,7 +170,7 @@ export default {
           API.fetchUpdateStatus({ job: "easy-camp", repo: "backend" }),
         ]);
 
-        console.log("ccerpF", ccerpF);
+        // console.log("ccerpF", ccerpF);
 
         this.all_erp_status = {
           ccerpF,
@@ -179,7 +188,7 @@ export default {
           campB,
         };
         this.error = null;
-        update(ccerpF);
+        // update(ccerpF);
       } catch (e) {
         this.error = e;
       }
