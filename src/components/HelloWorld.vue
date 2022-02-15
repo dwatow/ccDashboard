@@ -16,6 +16,7 @@
             class="nav-link active erp-name"
             aria-current="page"
             @click="update(erp_status)"
+            :disabled="erp_status.isSync != null"
           >
             {{ erpName[key] }}
             <small
@@ -264,7 +265,7 @@ export default {
       }
     },
     update(erp) {
-      this.current_erp = erp;
+      if (erp.isSync != null) this.current_erp = erp;
     },
   },
   computed: {
