@@ -135,58 +135,128 @@ export default {
     };
   },
   methods: {
-    async fetchStatus() {
+    fetchStatus() {
       try {
         // this.all_erp_status = null;
         // this.current_erp = null;
         this.error = "連線中...";
-        const [
-          ccerpF,
-          ccerpFV,
-          ccerpB,
-          ccgeoF,
-          ccgeoB,
-          jserpF,
-          jserpB,
-          patronF,
-          patronB,
-          prettyF,
-          prettyB,
-          campF,
-          campB,
-        ] = await Promise.all([
-          API.fetchUpdateStatus({ job: "ccerp", repo: "ccerp-frontend" }),
-          API.fetchUpdateStatus({ job: "ccerp", repo: "ccerp-frontend-vue" }),
-          API.fetchUpdateStatus({ job: "ccerp", repo: "ccerp-backend" }),
-          API.fetchUpdateStatus({ job: "ccgeo", repo: "ccgeo-frontend" }),
-          API.fetchUpdateStatus({ job: "ccgeo", repo: "ccgeo-backend" }),
-          API.fetchUpdateStatus({ job: "jserp", repo: "frontend" }),
-          API.fetchUpdateStatus({ job: "jserp", repo: "backend" }),
-          API.fetchUpdateStatus({ job: "patron", repo: "frontend" }),
-          API.fetchUpdateStatus({ job: "patron", repo: "backend" }),
-          API.fetchUpdateStatus({ job: "pretty", repo: "frontend" }),
-          API.fetchUpdateStatus({ job: "pretty", repo: "backend" }),
-          API.fetchUpdateStatus({ job: "easy-camp", repo: "frontend" }),
-          API.fetchUpdateStatus({ job: "easy-camp", repo: "backend" }),
-        ]);
-
-        // console.log("ccerpF", ccerpF);
-
-        this.all_erp_status = {
-          ccerpF,
-          ccerpFV,
-          ccerpB,
-          ccgeoF,
-          ccgeoB,
-          jserpF,
-          jserpB,
-          patronF,
-          patronB,
-          prettyF,
-          prettyB,
-          campF,
-          campB,
-        };
+        API.fetchUpdateStatus({
+          job: "ccerp",
+          repo: "ccerp-frontend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            ccerpF: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "ccerp",
+          repo: "ccerp-frontend-vue",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            ccerpFV: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "ccerp",
+          repo: "ccerp-backend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            ccerpB: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "ccgeo",
+          repo: "ccgeo-frontend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            ccgeoF: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "ccgeo",
+          repo: "ccgeo-backend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            ccgeoB: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "jserp",
+          repo: "frontend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            jserpF: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "jserp",
+          repo: "backend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            jserpB: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "patron",
+          repo: "frontend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            patronF: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "patron",
+          repo: "backend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            patronB: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "pretty",
+          repo: "frontend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            prettyF: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "pretty",
+          repo: "backend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            prettyB: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "easy-camp",
+          repo: "frontend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            campF: res,
+          };
+        });
+        API.fetchUpdateStatus({
+          job: "easy-camp",
+          repo: "backend",
+        }).then((res) => {
+          this.all_erp_status = {
+            ...this.all_erp_status,
+            campB: res,
+          };
+        });
         this.error = null;
         // update(ccerpF);
       } catch (e) {
