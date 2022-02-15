@@ -1,13 +1,15 @@
-import axios from 'axios';
-
+import axios from "axios";
 
 const jenkinsAPI = axios.create({
-  baseURL: `https://my-god.herokuapp.com`,
-})
+  // baseURL: `https://my-god.herokuapp.com`,
+  baseURL: `https://a509-114-33-138-55.ngrok.io`,
+});
 
 export default {
-  async fetchUpdateStatus () {
-    const res = await jenkinsAPI.get('/cc-update-staus');
-    return res.data
-  }
-}
+  async fetchUpdateStatus(params) {
+    const res = await jenkinsAPI.get("/cc-update-staus", {
+      params,
+    });
+    return res.data;
+  },
+};

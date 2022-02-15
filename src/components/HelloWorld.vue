@@ -1,20 +1,38 @@
 <template>
   <div class="container">
-    <button type="button" class="btn btn-primary my-2 me-2" @click="fetchStatus">重新整理</button>
+    <button
+      type="button"
+      class="btn btn-primary my-2 me-2"
+      @click="fetchStatus"
+    >
+      重新整理
+    </button>
     <span v-if="error">{{ error }}</span>
+    <!-- <pre>{{ all_erp_status }}</pre> -->
     <nav>
       <ul class="nav nav-tabs erp_status">
         <li class="nav-item" v-for="(value, key) in all_erp_status">
-          <a class="nav-link active erp-name" aria-current="page" @click="update(value)">
+          <a
+            class="nav-link active erp-name"
+            aria-current="page"
+            @click="update(value)"
+          >
             {{ erpName[key] }}
-            <small class="badge rounded-pill bg-danger" v-if="!value.isSync">待更新</small>
+            <small class="badge rounded-pill bg-danger" v-if="!value.isSync"
+              >待更新</small
+            >
           </a>
         </li>
       </ul>
     </nav>
     <!-- <pre>current_erp: {{ current_erp }}</pre> -->
     <div class="content" v-if="current_erp">
-      <a class="btn btn-primary my-3" target="_blank" :href="current_erp.network">Github Network</a>
+      <a
+        class="btn btn-primary my-3"
+        target="_blank"
+        :href="current_erp.network"
+        >Github Network</a
+      >
       <div class="row">
         <div class="col">
           <div>
@@ -24,7 +42,9 @@
             <p>
               <span class="col-7">
                 最後更新:
-                <a :href="current_erp.lastest_stage.link">{{ current_erp.lastest_stage.log }}</a>
+                <a :href="current_erp.lastest_stage.link">{{
+                  current_erp.lastest_stage.log
+                }}</a>
               </span>
             </p>
             <div v-html="current_erp.lastest_stage.html"></div>
@@ -38,7 +58,9 @@
             <p>
               <span class="col-7">
                 最後更新:
-                <a :href="current_erp.lastest_prod.link">{{ current_erp.lastest_prod.log }}</a>
+                <a :href="current_erp.lastest_prod.link">{{
+                  current_erp.lastest_prod.log
+                }}</a>
               </span>
             </p>
             <div v-html="current_erp.lastest_prod.html"></div>
@@ -50,77 +72,124 @@
 </template>
 
 <script>
-import API from './../utility/jenkinsAPI'
+import API from "./../utility/jenkinsAPI";
 export default {
-  name: 'Hello World',
-  created () {
+  name: "Hello World",
+  created() {
     this.fetchStatus();
   },
-  data () {
+  data() {
     return {
       all_erp_status: {
-    "ccerpF": {
-        "isSync": true,
-    },
-    "ccerpFV": {
-        "isSync": true,
-    },
-    "ccerpB": {
-        "isSync": true,
-    },
-    "ccgeoF": {
-        "isSync": true,
-    },
-    "ccgeoB": {
-        "isSync": true,
-    },
-    "jserpF": {
-        "isSync": true,
-    },
-    "jserpB": {
-        "isSync": true,
-    },
-    "patronF": {
-        "isSync": true,
-    },
-    "patronB": {
-        "isSync": true,
-    },
-    "prettyF": {
-        "isSync": true,
-    },
-    "prettyB": {
-        "isSync": true,
-    },
-    "campF": {
-        "isSync": true,
-    },
-    "campB": {
-        "isSync": true,
-    }
-},
+        ccerpF: {
+          isSync: true,
+        },
+        ccerpFV: {
+          isSync: true,
+        },
+        ccerpB: {
+          isSync: true,
+        },
+        ccgeoF: {
+          isSync: true,
+        },
+        ccgeoB: {
+          isSync: true,
+        },
+        jserpF: {
+          isSync: true,
+        },
+        jserpB: {
+          isSync: true,
+        },
+        patronF: {
+          isSync: true,
+        },
+        patronB: {
+          isSync: true,
+        },
+        prettyF: {
+          isSync: true,
+        },
+        prettyB: {
+          isSync: true,
+        },
+        campF: {
+          isSync: true,
+        },
+        campB: {
+          isSync: true,
+        },
+      },
       current_erp: null,
-      error: null
-    }
+      error: null,
+    };
   },
   methods: {
-    async fetchStatus () {
+    async fetchStatus() {
       try {
         // this.all_erp_status = null;
         // this.current_erp = null;
-        this.error = '連線中...';
-        this.all_erp_status = await API.fetchUpdateStatus();
+        this.error = "連線中...";
+        const [
+          ccerpF,
+          ccerpFV,
+          ccerpB,
+          ccgeoF,
+          ccgeoB,
+          jserpF,
+          jserpB,
+          patronF,
+          patronB,
+          prettyF,
+          prettyB,
+          campF,
+          campB,
+        ] = await Promise.all([
+          API.fetchUpdateStatus({ job: "ccerp", repo: "ccerp-frontend" }),
+          API.fetchUpdateStatus({ job: "ccerp", repo: "ccerp-frontend-vue" }),
+          API.fetchUpdateStatus({ job: "ccerp", repo: "ccerp-backend" }),
+          API.fetchUpdateStatus({ job: "ccgeo", repo: "ccgeo-frontend" }),
+          API.fetchUpdateStatus({ job: "ccgeo", repo: "ccgeo-backend" }),
+          API.fetchUpdateStatus({ job: "jserp", repo: "frontend" }),
+          API.fetchUpdateStatus({ job: "jserp", repo: "backend" }),
+          API.fetchUpdateStatus({ job: "patron", repo: "frontend" }),
+          API.fetchUpdateStatus({ job: "patron", repo: "backend" }),
+          API.fetchUpdateStatus({ job: "pretty", repo: "frontend" }),
+          API.fetchUpdateStatus({ job: "pretty", repo: "backend" }),
+          API.fetchUpdateStatus({ job: "easy-camp", repo: "frontend" }),
+          API.fetchUpdateStatus({ job: "easy-camp", repo: "backend" }),
+        ]);
+
+        console.log("ccerpF", ccerpF);
+
+        this.all_erp_status = {
+          ccerpF,
+          ccerpFV,
+          ccerpB,
+          ccgeoF,
+          ccgeoB,
+          jserpF,
+          jserpB,
+          patronF,
+          patronB,
+          prettyF,
+          prettyB,
+          campF,
+          campB,
+        };
         this.error = null;
+        update(ccerpF);
       } catch (e) {
-        this.error = e
+        this.error = e;
       }
     },
-    update (erp) {
-      this.current_erp = erp
-    }
+    update(erp) {
+      this.current_erp = erp;
+    },
   },
   computed: {
-    erpName () {
+    erpName() {
       return {
         ccerpF: "全強 ERP 前端 (AngularJS)",
         ccerpFV: "全強 ERP 前端 (Vue)",
@@ -135,13 +204,13 @@ export default {
         prettyB: "台灣真美 ERP 後端",
         campF: "露營樂 ERP 前端",
         campB: "露營樂 ERP 後端",
-      }
+      };
     },
-    erpStatus () {
-      return this.all_erp_status
-    }
-  }
-}
+    erpStatus() {
+      return this.all_erp_status;
+    },
+  },
+};
 </script>
 
 <style scoped>
