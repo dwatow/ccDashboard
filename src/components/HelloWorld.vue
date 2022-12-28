@@ -2,27 +2,32 @@
   <div class="container">
     <span v-if="error">{{ error }}</span>
     <!-- <pre>{{ all_erp_status }}</pre> -->
-    <nav class="mt-5">
+    <button
+      type="button"
+      class="btn btn-primary my-2 me-2"
+      @click="fetchStatus(null)"
+    >
+      全部重新整理
+    </button>
+    <nav>
       <ul class="nav nav-tabs erp_status">
         <li class="nav-item" v-for="(erp_status, key) in all_erp_status">
-          <!-- <pre>erp_status: {{  erp_status  }}</pre> -->
+          <pre>erp_status: {{  erp_status  }}</pre>
           <!-- <pre>key: {{  key }}</pre> -->
           <a
             class="nav-link active erp-name"
             aria-current="page"
-            @click="update(erp_status)"
-            :disabled="erp_status.isSync != null"
+            @click="update(erp_status, key)"
           >
             {{ erp_status.name }}
-          <button
-          v-if="erp_status.isSync != null"
-            type="button"
-            class="btn btn-primary my-2 me-2 btn-sm"
-            @click="fetchStatus(erp_status.repo)"
-          >
-            重新整理
-          </button>
-
+            <button
+            v-if="erp_status.isSync != null"
+              type="button"
+              class="btn btn-primary my-2 me-2 btn-sm"
+              @click="fetchStatus(erp_status.repo)"
+            >
+              重新整理
+            </button>
             <small
               class="badge rounded-pill bg-danger"
               v-if="erp_status.isSync === false"
@@ -167,10 +172,6 @@ export default {
       error: null,
     };
   },
-  updated() {
-    console.log(document.querySelectorAll('h2'));
-    console.log(document.querySelectorAll('ol'));
-  },
   methods: {
     fetchStatus(repo) {
       try {
@@ -184,7 +185,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              ccerpF: res,
+              ccerpF: {
+                ...this.all_erp_status.ccerpF,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -193,7 +197,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              ccerpFV: res,
+              ccerpFV: {
+                ...this.all_erp_status.ccerpFV,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -202,7 +209,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              ccerpB: res,
+              ccerpB: {
+                ...this.all_erp_status.ccerpB,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -211,7 +221,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              ccgeoF: res,
+              ccgeoF: {
+                ...this.all_erp_status.ccgeoF,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -220,7 +233,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              ccgeoB: res,
+              ccgeoB: {
+                ...this.all_erp_status.ccgeoB,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -229,7 +245,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              jserpF: res,
+              jserpF: {
+                ...this.all_erp_status.jserpF,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -238,7 +257,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              jserpB: res,
+              jserpB: {
+                ...this.all_erp_status.jserpB,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -247,7 +269,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              patronF: res,
+              patronF: {
+                ...this.all_erp_status.patronF,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -256,7 +281,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              patronB: res,
+              patronB: {
+                ...this.all_erp_status.patronB,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -265,7 +293,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              prettyF: res,
+              prettyF: {
+                ...this.all_erp_status.prettyF,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -274,7 +305,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              prettyB: res,
+              prettyB: {
+                ...this.all_erp_status.prettyB,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -283,7 +317,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              campF: res,
+              campF: {
+                ...this.all_erp_status.campF,
+                ...res
+              },
             };
           });
           API.fetchUpdateStatus({
@@ -292,7 +329,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              campB: res,
+              campB: {
+                ...this.all_erp_status.campB,
+                ...res
+              },
             };
           });
           // update(ccerpF);
@@ -303,7 +343,10 @@ export default {
           }).then((res) => {
             this.all_erp_status = {
               ...this.all_erp_status,
-              ccerpF: res,
+              [key]: {
+                ...this.all_erp_status[key],
+                ...res
+              },
             };
           });
         }
@@ -312,18 +355,27 @@ export default {
         this.error = e;
       }
     },
-    update(erp) {
-      this.current_erp = erp;
+    mounted() {
+      this.$nextTick(() => {
+        removeH2Link();
+        removeNameLink();
+      })
+    },
+    update(erp, key) {
+      this.current_erp = {
+        key, 
+        ...erp
+      };
     },
     removeH2Link() {
-      document.querySelectorAll('h2').forEach(h2 => {
+      document.querySelectorAll('content h2').forEach(h2 => {
         const a = h2.querySelector('a');
         const text = a.textContent
         h2.textContent = text
       })
     },
     removeNameLink() {
-      document.querySelectorAll('ol').forEach(h2 => {
+      document.querySelectorAll('content ol').forEach(h2 => {
         const a_name = h2.querySelector('a');
         const name = a_name.textContent;
         const a_name_list = [...h2.querySelectorAll('a')].filter(link => link.textContent === name);
