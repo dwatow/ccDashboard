@@ -1,24 +1,28 @@
 <template>
   <div class="container">
-    <button
-      type="button"
-      class="btn btn-primary my-2 me-2"
-      @click="fetchStatus"
-    >
-      重新整理
-    </button>
     <span v-if="error">{{ error }}</span>
     <!-- <pre>{{ all_erp_status }}</pre> -->
-    <nav>
+    <nav class="mt-5">
       <ul class="nav nav-tabs erp_status">
         <li class="nav-item" v-for="(erp_status, key) in all_erp_status">
+          <!-- <pre>erp_status: {{  erp_status  }}</pre> -->
+          <!-- <pre>key: {{  key }}</pre> -->
           <a
             class="nav-link active erp-name"
             aria-current="page"
             @click="update(erp_status)"
             :disabled="erp_status.isSync != null"
           >
-            {{ erpName[key] }}
+            {{ erp_status.name }}
+          <button
+          v-if="erp_status.isSync != null"
+            type="button"
+            class="btn btn-primary my-2 me-2 btn-sm"
+            @click="fetchStatus(erp_status.repo)"
+          >
+            重新整理
+          </button>
+
             <small
               class="badge rounded-pill bg-danger"
               v-if="erp_status.isSync === false"
@@ -27,7 +31,7 @@
             </small>
             <small
               class="badge rounded-pill bg-success"
-              v-if="erp_status.isSync === null"
+              v-if="erp_status.isSync == null"
             >
               連線中
             </small>
@@ -35,8 +39,7 @@
         </li>
       </ul>
     </nav>
-    <!-- <pre>current_erp: {{ current_erp }}</pre> -->
-    <div class="content" v-if="current_erp">
+    <div class="content" v-if="current_erp.isSync != null">
       <a
         class="btn btn-primary my-3"
         target="_blank"
@@ -78,6 +81,7 @@
         </div>
       </div>
     </div>
+    <div v-else>({{ current_erp?.name }} 資料載入中...)</div>
   </div>
 </template>
 
@@ -86,208 +90,246 @@ import API from "./../utility/jenkinsAPI";
 export default {
   name: "Hello World",
   created() {
-    this.fetchStatus();
+    this.fetchStatus(null);
   },
   data() {
     return {
       all_erp_status: {
         ccerpF: {
           isSync: null,
+          repo: "ccerp-frontend",
+          name: "全強 ERP 前端 (AngularJS)"
         },
         ccerpFV: {
           isSync: null,
+          repo: "ccerp-frontend-vue",
+          name: "全強 ERP 前端 (Vue)"
         },
         ccerpB: {
           isSync: null,
+          repo: "ccerp-backend",
+          name: "全強 ERP 後端"
         },
         ccgeoF: {
           isSync: null,
+          repo: "ccgeo-frontend",
+          name: "大地監控 前端"
         },
         ccgeoB: {
           isSync: null,
+          repo: "ccgeo-backend",
+          name: "大地監控 後端"
         },
         jserpF: {
           isSync: null,
+          repo: "frontend",
+          name: "郡信 ERP 前端"
         },
         jserpB: {
           isSync: null,
+          repo: "backend",
+          name: "郡信 ERP 後端"
         },
         patronF: {
           isSync: null,
+          repo: "frontend",
+          name: "台灣守護 ERP 前端"
         },
         patronB: {
           isSync: null,
+          repo: "backend",
+          name: "台灣守護 ERP 後端"
         },
         prettyF: {
           isSync: null,
+          repo: "frontend",
+          name: "台灣真美 ERP 前端"
         },
         prettyB: {
           isSync: null,
+          repo: "backend",
+          name: "台灣真美 ERP 後端"
         },
         campF: {
           isSync: null,
+          repo: "frontend",
+          name: "露營樂 ERP 前端"
         },
         campB: {
           isSync: null,
+          repo: "backend",
+          name: "露營樂 ERP 後端"
         },
       },
-      current_erp: null,
+      current_erp: {
+        isSync: null,
+      },
       error: null,
     };
   },
+  updated() {
+    console.log(document.querySelectorAll('h2'));
+    console.log(document.querySelectorAll('ol'));
+  },
   methods: {
-    fetchStatus() {
+    fetchStatus(repo) {
       try {
-        // this.all_erp_status = null;
-        // this.current_erp = null;
         this.error = "連線中...";
-        API.fetchUpdateStatus({
-          job: "ccerp",
-          repo: "ccerp-frontend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            ccerpF: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "ccerp",
-          repo: "ccerp-frontend-vue",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            ccerpFV: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "ccerp",
-          repo: "ccerp-backend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            ccerpB: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "ccgeo",
-          repo: "ccgeo-frontend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            ccgeoF: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "ccgeo",
-          repo: "ccgeo-backend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            ccgeoB: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "jserp",
-          repo: "frontend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            jserpF: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "jserp",
-          repo: "backend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            jserpB: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "patron",
-          repo: "frontend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            patronF: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "patron",
-          repo: "backend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            patronB: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "pretty",
-          repo: "frontend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            prettyF: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "pretty",
-          repo: "backend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            prettyB: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "easy-camp",
-          repo: "frontend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            campF: res,
-          };
-        });
-        API.fetchUpdateStatus({
-          job: "easy-camp",
-          repo: "backend",
-        }).then((res) => {
-          this.all_erp_status = {
-            ...this.all_erp_status,
-            campB: res,
-          };
-        });
+        if (repo == null) {
+          // this.all_erp_status = null;
+          // this.current_erp = null;
+          API.fetchUpdateStatus({
+            job: "ccerp",
+            repo: "ccerp-frontend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              ccerpF: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "ccerp",
+            repo: "ccerp-frontend-vue",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              ccerpFV: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "ccerp",
+            repo: "ccerp-backend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              ccerpB: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "ccgeo",
+            repo: "ccgeo-frontend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              ccgeoF: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "ccgeo",
+            repo: "ccgeo-backend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              ccgeoB: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "jserp",
+            repo: "frontend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              jserpF: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "jserp",
+            repo: "backend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              jserpB: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "patron",
+            repo: "frontend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              patronF: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "patron",
+            repo: "backend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              patronB: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "pretty",
+            repo: "frontend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              prettyF: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "pretty",
+            repo: "backend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              prettyB: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "easy-camp",
+            repo: "frontend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              campF: res,
+            };
+          });
+          API.fetchUpdateStatus({
+            job: "easy-camp",
+            repo: "backend",
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              campB: res,
+            };
+          });
+          // update(ccerpF);
+        } else {
+          API.fetchUpdateStatus({
+            job: "ccerp",
+            repo,
+          }).then((res) => {
+            this.all_erp_status = {
+              ...this.all_erp_status,
+              ccerpF: res,
+            };
+          });
+        }
         this.error = null;
-        // update(ccerpF);
       } catch (e) {
         this.error = e;
       }
     },
     update(erp) {
-      if (erp.isSync != null) this.current_erp = erp;
+      this.current_erp = erp;
     },
-  },
-  computed: {
-    erpName() {
-      return {
-        ccerpF: "全強 ERP 前端 (AngularJS)",
-        ccerpFV: "全強 ERP 前端 (Vue)",
-        ccerpB: "全強 ERP 後端",
-        ccgeoF: "大地監控 前端",
-        ccgeoB: "大地監控 後端",
-        jserpF: "郡信 ERP 前端",
-        jserpB: "郡信 ERP 後端",
-        patronF: "台灣守護 ERP 前端",
-        patronB: "台灣守護 ERP 後端",
-        prettyF: "台灣真美 ERP 前端",
-        prettyB: "台灣真美 ERP 後端",
-        campF: "露營樂 ERP 前端",
-        campB: "露營樂 ERP 後端",
-      };
+    removeH2Link() {
+      document.querySelectorAll('h2').forEach(h2 => {
+        const a = h2.querySelector('a');
+        const text = a.textContent
+        h2.textContent = text
+      })
     },
-    erpStatus() {
-      return this.all_erp_status;
+    removeNameLink() {
+      document.querySelectorAll('ol').forEach(h2 => {
+        const a_name = h2.querySelector('a');
+        const name = a_name.textContent;
+        const a_name_list = [...h2.querySelectorAll('a')].filter(link => link.textContent === name);
+        console.log('a', a_name_list)
+        a_name_list.forEach(link => link.outerHTML = link.textContent)
+      })
     },
   },
 };
