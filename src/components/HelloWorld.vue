@@ -12,7 +12,7 @@
     <nav>
       <ul class="nav nav-tabs erp_status">
         <li class="nav-item" v-for="(erp_status, key) in all_erp_status">
-          <pre>erp_status: {{  erp_status  }}</pre>
+          <!-- <pre>erp_status: {{  erp_status  }}</pre> -->
           <!-- <pre>key: {{  key }}</pre> -->
           <a
             class="nav-link active erp-name"
