@@ -101,67 +101,67 @@ export default {
     return {
       all_erp_status: {
         ccerpF: {
-          isSync: null,
+          isSync: true,
           repo: "ccerp-frontend",
           name: "全強 ERP 前端 (AngularJS)"
         },
         ccerpFV: {
-          isSync: null,
+          isSync: true,
           repo: "ccerp-frontend-vue",
           name: "全強 ERP 前端 (Vue)"
         },
         ccerpB: {
-          isSync: null,
+          isSync: true,
           repo: "ccerp-backend",
           name: "全強 ERP 後端"
         },
         ccgeoF: {
-          isSync: null,
+          isSync: true,
           repo: "ccgeo-frontend",
           name: "大地監控 前端"
         },
         ccgeoB: {
-          isSync: null,
+          isSync: true,
           repo: "ccgeo-backend",
           name: "大地監控 後端"
         },
         jserpF: {
-          isSync: null,
+          isSync: true,
           repo: "frontend",
           name: "郡信 ERP 前端"
         },
         jserpB: {
-          isSync: null,
+          isSync: true,
           repo: "backend",
           name: "郡信 ERP 後端"
         },
         patronF: {
-          isSync: null,
+          isSync: true,
           repo: "frontend",
           name: "台灣守護 ERP 前端"
         },
         patronB: {
-          isSync: null,
+          isSync: true,
           repo: "backend",
           name: "台灣守護 ERP 後端"
         },
         prettyF: {
-          isSync: null,
+          isSync: true,
           repo: "frontend",
           name: "台灣真美 ERP 前端"
         },
         prettyB: {
-          isSync: null,
+          isSync: true,
           repo: "backend",
           name: "台灣真美 ERP 後端"
         },
         campF: {
-          isSync: null,
+          isSync: true,
           repo: "frontend",
           name: "露營樂 ERP 前端"
         },
         campB: {
-          isSync: null,
+          isSync: true,
           repo: "backend",
           name: "露營樂 ERP 後端"
         },
@@ -171,6 +171,13 @@ export default {
       },
       error: null,
     };
+  },
+  updated() {
+    this.$nextTick(() => {
+      console.log('update 2');
+      this.removeH2Link();
+      this.removeNameLink();
+    })
   },
   methods: {
     fetchStatus(repo) {
@@ -355,27 +362,27 @@ export default {
         this.error = e;
       }
     },
-    mounted() {
-      this.$nextTick(() => {
-        removeH2Link();
-        removeNameLink();
-      })
-    },
     update(erp, key) {
       this.current_erp = {
         key, 
         ...erp
       };
+      // console.log('update 1');
+      // this.$nextTick(() => {
+      //   console.log('update 2');
+      //   removeH2Link();
+      //   removeNameLink();
+      // })
     },
     removeH2Link() {
-      document.querySelectorAll('content h2').forEach(h2 => {
+      document.querySelectorAll('.content h2').forEach(h2 => {
         const a = h2.querySelector('a');
         const text = a.textContent
         h2.textContent = text
       })
     },
     removeNameLink() {
-      document.querySelectorAll('content ol').forEach(h2 => {
+      document.querySelectorAll('.content ol').forEach(h2 => {
         const a_name = h2.querySelector('a');
         const name = a_name.textContent;
         const a_name_list = [...h2.querySelectorAll('a')].filter(link => link.textContent === name);
