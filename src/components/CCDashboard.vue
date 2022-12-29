@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    
     <span v-if="error">{{ error }}</span>
     <!-- <pre>{{ all_erp_status }}</pre> -->
     <button
@@ -7,12 +8,13 @@
       class="btn btn-primary my-2 me-2"
       @click="fetchStatus(null)"
     >
-      全部重新整理
+      重新整理 <FontAwesomeIcon icon="fa-solid fa-rotate-right" />
     </button>
     <nav>
       <ul class="nav nav-tabs erp_status">
-        <li class="nav-item" v-for="(erp_status, key) in all_erp_status">
-          <!-- <pre>erp_status: {{  erp_status  }}</pre> -->
+        <li class="nav-item" v-for="(erp_status, key) in all_erp_status" :key="key">
+          <!-- <pre>erp_status.isSync: {{  erp_status.isSync  }}</pre> -->
+          <!-- <pre>erp_status.network: {{  erp_status.network  }}</pre> -->
           <!-- <pre>key: {{  key }}</pre> -->
           <a
             class="nav-link active erp-name"
@@ -20,23 +22,23 @@
             @click="update(erp_status, key)"
           >
             {{ erp_status.name }}
-            <button
-            v-if="erp_status.isSync != null"
-              type="button"
-              class="btn btn-primary my-2 me-2 btn-sm"
-              @click="fetchStatus(erp_status.repo)"
-            >
-              重新整理
-            </button>
             <small
               class="badge rounded-pill bg-danger"
-              v-if="erp_status.isSync === false"
+              v-if="erp_status.isSync === syncType['syncable']"
             >
               待更新
             </small>
+            <button
+              v-if="['init', 'error', 'syncable', 'success'].some(status => syncType[status] === erp_status.isSync)"
+              type="button"
+              class="btn btn-outline-secondary my-2 mx-1 btn-sm"
+              @click.prevent="fetchStatus(key)"
+            >
+              <FontAwesomeIcon icon="fa-solid fa-rotate-right" />
+            </button>
             <small
               class="badge rounded-pill bg-success"
-              v-if="erp_status.isSync == null"
+              v-if="erp_status.isSync === syncType['connecting']"
             >
               連線中
             </small>
@@ -44,9 +46,9 @@
         </li>
       </ul>
     </nav>
-    <div class="content" v-if="current_erp.isSync != null">
+    <div class="content" v-if="['syncable', 'success', 'error'].some(status => syncType[status] === current_erp.isSync)">
       <a
-        class="btn btn-primary my-3"
+        class="btn btn-outline-success my-3"
         target="_blank"
         :href="current_erp.network"
         >Github Network</a
@@ -91,105 +93,129 @@
 </template>
 
 <script>
-import API from "./../utility/jenkinsAPI";
+import API from "../utility/jenkinsAPI";
+import { syncType } from "../utility/enum";
+
 export default {
-  name: "Hello World",
+  name: "CCDashboard",
   created() {
-    this.fetchStatus(null);
+    // this.fetchStatus(null);
   },
   data() {
     return {
       all_erp_status: {
         ccerpF: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "ccerp",
           repo: "ccerp-frontend",
           name: "全強 ERP 前端 (AngularJS)"
         },
         ccerpFV: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "ccerp",
           repo: "ccerp-frontend-vue",
           name: "全強 ERP 前端 (Vue)"
         },
         ccerpB: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "ccerp",
           repo: "ccerp-backend",
           name: "全強 ERP 後端"
         },
         ccgeoF: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "ccgeo",
           repo: "ccgeo-frontend",
           name: "大地監控 前端"
         },
         ccgeoB: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "ccgeo",
           repo: "ccgeo-backend",
           name: "大地監控 後端"
         },
         jserpF: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "jserp",
           repo: "frontend",
           name: "郡信 ERP 前端"
         },
         jserpB: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "jserp",
           repo: "backend",
           name: "郡信 ERP 後端"
         },
         patronF: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "patron",
           repo: "frontend",
           name: "台灣守護 ERP 前端"
         },
         patronB: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "patron",
           repo: "backend",
           name: "台灣守護 ERP 後端"
         },
         prettyF: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "pretty",
           repo: "frontend",
           name: "台灣真美 ERP 前端"
         },
         prettyB: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "pretty",
           repo: "backend",
           name: "台灣真美 ERP 後端"
         },
         campF: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "easy-camp",
           repo: "frontend",
           name: "露營樂 ERP 前端"
         },
         campB: {
-          isSync: true,
+          isSync: syncType['init'],
+          job: "easy-camp",
           repo: "backend",
           name: "露營樂 ERP 後端"
         },
       },
       current_erp: {
-        isSync: null,
+        isSync: syncType['init'],
       },
       error: null,
     };
   },
   updated() {
     this.$nextTick(() => {
-      console.log('update 2');
       this.removeH2Link();
       this.removeNameLink();
     })
   },
+  computed: {
+    syncType: () => syncType
+  },
   methods: {
-    fetchStatus(repo) {
+    setSyncType(type) {
+      Object.values(this.all_erp_status).forEach(erp_status => {
+        erp_status.isSync = syncType[type]
+      })
+    },
+    fetchStatus(key) {
       try {
         this.error = "連線中...";
-        if (repo == null) {
+        if (key == null) {
+          this.setSyncType('connecting');
           // this.all_erp_status = null;
           // this.current_erp = null;
           API.fetchUpdateStatus({
             job: "ccerp",
             repo: "ccerp-frontend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               ccerpF: {
@@ -202,6 +228,7 @@ export default {
             job: "ccerp",
             repo: "ccerp-frontend-vue",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               ccerpFV: {
@@ -214,6 +241,7 @@ export default {
             job: "ccerp",
             repo: "ccerp-backend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               ccerpB: {
@@ -226,6 +254,7 @@ export default {
             job: "ccgeo",
             repo: "ccgeo-frontend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               ccgeoF: {
@@ -238,6 +267,7 @@ export default {
             job: "ccgeo",
             repo: "ccgeo-backend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               ccgeoB: {
@@ -250,6 +280,7 @@ export default {
             job: "jserp",
             repo: "frontend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               jserpF: {
@@ -262,6 +293,7 @@ export default {
             job: "jserp",
             repo: "backend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               jserpB: {
@@ -274,6 +306,7 @@ export default {
             job: "patron",
             repo: "frontend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               patronF: {
@@ -286,6 +319,7 @@ export default {
             job: "patron",
             repo: "backend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               patronB: {
@@ -298,6 +332,7 @@ export default {
             job: "pretty",
             repo: "frontend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               prettyF: {
@@ -310,6 +345,7 @@ export default {
             job: "pretty",
             repo: "backend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               prettyB: {
@@ -322,6 +358,7 @@ export default {
             job: "easy-camp",
             repo: "frontend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               campF: {
@@ -334,6 +371,7 @@ export default {
             job: "easy-camp",
             repo: "backend",
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               campB: {
@@ -344,10 +382,15 @@ export default {
           });
           // update(ccerpF);
         } else {
+          const erp = this.all_erp_status[key]
+          const { job, repo } = erp;
+          erp.isSync = syncType['connecting']
+          console.log(erp, key);
           API.fetchUpdateStatus({
-            job: "ccerp",
+            job,
             repo,
           }).then((res) => {
+            res.isSync = Number(res.isSync)
             this.all_erp_status = {
               ...this.all_erp_status,
               [key]: {
@@ -367,27 +410,24 @@ export default {
         key, 
         ...erp
       };
-      // console.log('update 1');
-      // this.$nextTick(() => {
-      //   console.log('update 2');
-      //   removeH2Link();
-      //   removeNameLink();
-      // })
     },
     removeH2Link() {
       document.querySelectorAll('.content h2').forEach(h2 => {
         const a = h2.querySelector('a');
-        const text = a.textContent
-        h2.textContent = text
+        if (a != null) {
+          const text = a.textContent
+          h2.textContent = text
+        }
       })
     },
     removeNameLink() {
       document.querySelectorAll('.content ol').forEach(h2 => {
         const a_name = h2.querySelector('a');
-        const name = a_name.textContent;
-        const a_name_list = [...h2.querySelectorAll('a')].filter(link => link.textContent === name);
-        console.log('a', a_name_list)
-        a_name_list.forEach(link => link.outerHTML = link.textContent)
+        if (a_name != null) {
+          const name = a_name.textContent;
+          const a_name_list = [...h2.querySelectorAll('a')].filter(link => link.textContent === name);
+          a_name_list.forEach(link => link.outerHTML = link.textContent)
+        }
       })
     },
   },
