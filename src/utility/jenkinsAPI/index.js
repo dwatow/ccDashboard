@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const jenkinsAPI = axios.create({
-  baseURL: `my-god.cyclic.app`,
+  baseURL: `https://my-god.cyclic.app`,
   // baseURL: `http://localhost:3030`,
 });
 
